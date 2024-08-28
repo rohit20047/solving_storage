@@ -1,48 +1,63 @@
 const baseUrl = '.netlify/functions'; // Update base URL for Netlify Functions
 const fileInput = document.querySelector('#fileInput');
 const uploadBtn = document.querySelector('#uploadBtn');
-let file, totalChunks, uploadId;
+const progressBar = document.getElementById('progressBar');
+const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB per chunk
 
-// Listen for file input change event
-fileInput.addEventListener('change', () => {
-  file = fileInput.files[0];
-  console.log("file ", file);
-  console.log("file.name ", file.name);
-});
-
-// Listen for upload button click event
-uploadBtn.addEventListener('click', async () => {
+uploadBtn.addEventListener('click', () => {
+  const file = fileInput.files[0];
   if (!file) {
-    return alert('Please select a file');
+    alert('Please select a file');
+    return;
   }
-
-  uploadBtn.disabled = true;
-
-  try {
-    // Start the timer
-    const startTime = new Date();
-
-    const formData = new FormData();
-    formData.append('file', file);
-    const uploadRes = await fetch(`${baseUrl}/upload_parallel`, {
-      method: "POST",
-      body: formData,
-    });
-    const { success, data } = await uploadRes.json();
-    console.log("file link: ", data);
-    if (!success) {
-      throw new Error('Error completing upload');
-    }
-
-    // End the timer and calculate the time elapsed
-    const endTime = new Date();
-    const timeElapsed = (endTime - startTime) / 1000;
-    console.log('Time elapsed:', timeElapsed, 'seconds');
-    alert('File uploaded successfully');
-  } catch (err) {
-    console.log(err);
-    alert('Error uploading file');
-  }
-
-  uploadBtn.disabled = false;
+  
+  uploadFileInChunks(file);
 });
+
+async function uploadFileInChunks(file) {
+  const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
+  let uploadedChunks = 0;
+
+  for (let start = 0; start < file.size; start += CHUNK_SIZE) {
+    const chunk = file.slice(start, start + CHUNK_SIZE);
+    const chunkFormData = new FormData();
+    chunkFormData.append('file', chunk);
+    chunkFormData.append('filename', file.name);
+    chunkFormData.append('chunkIndex', Math.floor(start / CHUNK_SIZE));
+
+    try {
+      await uploadChunk(chunkFormData);
+      uploadedChunks++;
+      updateProgressBar((uploadedChunks / totalChunks) * 100);
+    } catch (error) {
+      console.error('Error uploading chunk:', error);
+      alert('Failed to upload file. Please try again.');
+      return;
+    }
+  }
+
+  alert('File uploaded successfully');
+}
+
+async function uploadChunk(formData) {
+  const response = await fetch(`${baseUrl}/upload_parallel`, {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error(`Error uploading chunk: ${response.statusText}`);
+  }
+
+  const result = await response.json();
+  if (!result.success) {
+    throw new Error('Server error during upload');
+  }
+
+  return result;
+}
+
+function updateProgressBar(percent) {
+  progressBar.style.width = `${percent}%`;
+  progressBar.innerText = `${Math.round(percent)}%`;
+}

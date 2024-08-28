@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Upload File</title>
+  <title>Chunked File Upload</title>
   <!-- Include Bootstrap CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" crossorigin="anonymous" />
 </head>
@@ -12,14 +12,17 @@
       <div class="col-md-6">
         <div class="card">
           <div class="card-body">
-            <h5 class="card-title mb-4">Send Complete File and Chunks in Backend</h5>
-            <form>
+            <h5 class="card-title mb-4">Chunked File Upload</h5>
+            <form id="uploadForm">
               <div class="form-group">
                 <label for="fileInput">Select File:</label>
-                <input type="file" class="form-control-file" id="fileInput">
+                <input type="file" class="form-control-file" id="fileInput" />
               </div>
-              <button type="submit" class="btn btn-primary" id="uploadBtn">Upload</button>
+              <button type="button" class="btn btn-primary" id="uploadBtn">Upload</button>
             </form>
+            <div class="progress mt-3">
+              <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+            </div>
           </div>
         </div>
       </div>
