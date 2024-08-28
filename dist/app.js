@@ -2,7 +2,7 @@ const baseUrl = '.netlify/functions'; // Update base URL for Netlify Functions
 const fileInput = document.querySelector('#fileInput');
 const uploadBtn = document.querySelector('#uploadBtn');
 const progressBar = document.getElementById('progressBar');
-const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB per chunk
+const CHUNK_SIZE = 2 * 1024 * 1024; // 5MB per chunk
 
 uploadBtn.addEventListener('click', () => {
   const file = fileInput.files[0];
