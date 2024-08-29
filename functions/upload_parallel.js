@@ -38,15 +38,16 @@ exports.handler = async (event, context) => {
     }
 
     const fileContent = fields.file.content;
-    const fileName = `${Date.now().toString()}_${fields.file.filename}`;
+    const fileName = `${Date.now().toString()}_${fields.filename}`;
 
     // S3 upload params
     const params = {
       Bucket: bucketName,
-      Key: fileName,
+      Key: `uploads/${fileName}`,
       Body: fileContent,
     };
-
+    
+     
     // Upload to S3 using lib-storage
     const uploadParallel = new Upload({
       client: s3,
@@ -62,11 +63,14 @@ exports.handler = async (event, context) => {
 
     const data = await uploadParallel.done();
 
+    
+    fileUrl = data.Location;
+
     return {
       statusCode: 200,
-      body: JSON.stringify({ success: true, data: data.Location }),
+      body: JSON.stringify({ success: true, data: fileUrl }),
       headers: {
-        'Content-Type': 'application/json',
+        ContentType:  'application/pdf',
         'Access-Control-Allow-Origin': '*',
       },
     };
@@ -76,7 +80,7 @@ exports.handler = async (event, context) => {
       statusCode: 500,
       body: JSON.stringify({ success: false, message: error.message }),
       headers: {
-        'Content-Type': 'application/json',
+        ContentType:  'application/pdf',
         'Access-Control-Allow-Origin': '*',
       },
     };

@@ -4,17 +4,20 @@
   <meta charset="UTF-8">
   <title>Chunked File Upload</title>
   <!-- Include Bootstrap CSS -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" crossorigin="anonymous" />
+  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" crossorigin="anonymous" /> -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+
 </head>
-<body>
-  <div class="container my-5">
-    <div class="row justify-content-center">
+<body class = "bg-yellow-500">
+  <div class="bg-yellow-400">
+    <div class="">
       <div class="col-md-6">
         <div class="card">
           <div class="card-body">
-            <h5 class="card-title mb-4">Chunked File Upload</h5>
+            <h5 class="text-lime-600">Chunked File Upload</h5>
             <form id="uploadForm">
               <div class="form-group">
+                <input type="text" name="customFileName" placeholder="Enter file name (without extension)" required ">
                 <label for="fileInput">Select File:</label>
                 <input type="file" class="form-control-file" id="fileInput" />
               </div>
@@ -22,11 +25,15 @@
             </form>
             <div class="progress mt-3">
               <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+             
             </div>
           </div>
         </div>
       </div>
     </div>
+    <div id="fileLinkDiv" >
+      <!-- Link will be dynamically inserted here -->
+  </div>
   </div>
 
   <!-- Include Bootstrap JS and jQuery -->
