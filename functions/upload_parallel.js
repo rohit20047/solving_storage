@@ -30,7 +30,6 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    // Parse the multipart form data using busboy
     const fields = await parseMultipartForm(event);
 
     if (!fields.file || !fields.file.content) {
@@ -38,15 +37,15 @@ exports.handler = async (event, context) => {
     }
 
     const fileContent = fields.file.content;
-    const fileName = `${Date.now().toString()}_${fields.filename}`;
+    const fileName = fields.filename; // Use the provided filename (which now includes the custom name)
 
     // S3 upload params
     const params = {
       Bucket: bucketName,
-      Key: `uploads/${fileName}`,
+      Key: `uploads/${fileName}`, // Use the custom filename directly
       Body: fileContent,
-      ContentType: 'application/pdf', // Set the correct content type
-      ContentDisposition: `inline; filename=${fileName}`, // Set filename and disposition
+      ContentType: 'application/pdf',
+      ContentDisposition: `inline; filename=${fileName}`,
     };
     
      
