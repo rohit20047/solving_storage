@@ -23,7 +23,7 @@ exports.handler = async (event, context) => {
       body: JSON.stringify({ message: 'Method Not Allowed' }),
       headers: {
         'Allow': 'POST',
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/pdf',
         'Access-Control-Allow-Origin': '*',
       },
     };
@@ -45,6 +45,8 @@ exports.handler = async (event, context) => {
       Bucket: bucketName,
       Key: `uploads/${fileName}`,
       Body: fileContent,
+      ContentType: 'application/pdf', // Set the correct content type
+      ContentDisposition: `inline; filename=${fileName}`, // Set filename and disposition
     };
     
      
@@ -62,7 +64,7 @@ exports.handler = async (event, context) => {
     });
 
     const data = await uploadParallel.done();
-
+    
     
     fileUrl = data.Location;
 
@@ -70,10 +72,12 @@ exports.handler = async (event, context) => {
       statusCode: 200,
       body: JSON.stringify({ success: true, data: fileUrl }),
       headers: {
-        ContentType:  'application/pdf',
-        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/pdf', // Set the correct content type
+        'Content-Disposition': 'inline; filename=document.pdf', // Set filename and disposition (optional, can be dynamic)
+        'Access-Control-Allow-Origin': '*', // Adjust for CORS if needed
       },
     };
+    
   } catch (error) {
     console.error('Caught error:', error);
     return {
